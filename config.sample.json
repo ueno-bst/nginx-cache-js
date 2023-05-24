@@ -1,0 +1,42 @@
+{
+    "name": "localhost",
+    "description": "localhost description",
+    "server_name": "localhost",
+    "server_alias": [
+        "localhost",
+        "localhost.localdomain"
+    ],
+    "location": [
+        {
+            "name": "wp-meta",
+            "description": "Wordpress meta files",
+            "uri": [
+                "^/wp-include/.*$",
+                "^/wp-content/.*$",
+                "^/wp-admin/load-(styles|scripts)\\.php$",
+                "^.*\\.(css|js|png|jpe?g|gif|webp|avif|gz|br|ico)$"
+            ],
+            "cache": {
+                "expire": {
+                    "min": 0,
+                    "max": 31536000
+                },
+                "rule": {
+                    "headers": {
+                        "type": "none",
+                        "pattern": [
+                        ]
+                    },
+                    "args": {
+                        "type": "all",
+                        "pattern": [
+                        ]
+                    },
+                    "cookies": {
+                        "type": "include"
+                    }
+                }
+            }
+        }
+    ]
+}

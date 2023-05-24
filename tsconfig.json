@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ESNext",
+        "lib": [
+            "esnext"
+        ],
+        "moduleResolution": "Node",
+        "sourceMap": false,
+        "baseUrl": "./",
+        "strict": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "files": [
+        "./node_modules/njs-types/index.d.ts",
+        "./node_modules/njs-types/ngx_core.d.ts",
+        "./node_modules/njs-types/njs_core.d.ts",
+        "./node_modules/njs-types/ngx_http_js_module.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "./src/**/*.ts",
+        "rollup.config.ts"
+    ],
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    }
+}

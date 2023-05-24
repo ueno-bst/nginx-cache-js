@@ -1,0 +1,17 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: .docker/nginx
+      dockerfile: Dockerfile
+      args:
+        ENABLED_MODULES: "ndk src lua brotli"
+    volumes:
+      - "./dist:/etc/nginx/njs"
+      - "./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./.docker/nginx/conf.d:/etc/nginx/conf.d"
+      - "./.docker/nginx/include.d:/etc/nginx/include.d"
+      - "./config.sample.json:/etc/nginx/config.json"
+    ports:
+      - "8080:80"
+
