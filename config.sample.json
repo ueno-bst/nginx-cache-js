@@ -1,15 +1,16 @@
 {
     "name": "localhost",
     "description": "localhost description",
+    "debug": true,
     "server": {
-        "host": "localhost2",
+        "host": "localhost",
         "alias": [
             "localhost.localdomain"
         ]
     },
     "location": [
         {
-            "name": "wp-meta",
+            "name": "meta",
             "description": "Wordpress meta files",
             "uri": [
                 "^/wp-include/.*$",
@@ -41,36 +42,36 @@
             }
         },
         {
-            "name": "njs-test",
+            "name": "admin",
             "description": "ngsadsad",
             "uri": [
-                "^/njs/.*"
+                "^/wp-admin/"
+            ]
+        },
+        {
+            "name": "front",
+            "description": "ngsadsad",
+            "uri": [
+                ".*"
             ],
             "cache": {
-                "expire": {
-                    "min": 0,
-                    "max": 31536000
-                },
+                "disable": false,
                 "rule": {
                     "args": {
-                        "type": "include",
-                        "pattern": [
-                            "aaa"
-                        ]
+                        "type": "all"
                     },
                     "header": {
                         "type": "include",
                         "pattern": [
-                            "Accept-Encoding",
-                            "User_Agent"
+                            "authorization"
                         ]
                     },
                     "cookie": {
                         "type": "include",
                         "pattern": [
-                            "lately",
-                            "wp_lang",
-                            "wordpress_*"
+                            "wordpress_logged_in_*",
+                            "comment_*",
+                            "wp-settings-*"
                         ]
                     }
                 }

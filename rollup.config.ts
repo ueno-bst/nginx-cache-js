@@ -1,7 +1,9 @@
 import pluginNodeResolve from "@rollup/plugin-node-resolve";
 import pluginBabel from "@rollup/plugin-babel";
 import pluginTypescript from "@rollup/plugin-typescript";
+import pluginCommonJS from "@rollup/plugin-commonjs";
 import pluginAlias from "@rollup/plugin-alias";
+import pluginTeaser from "@rollup/plugin-terser";
 import pkg from "./package.json" assert {type: "json"};
 import {RollupOptions} from "rollup";
 
@@ -31,7 +33,9 @@ export default <RollupOptions[]>[
                 format: "es",
                 sourcemap: false,
                 exports: "default",
-                plugins: []
+                plugins: [
+                    pluginTeaser()
+                ]
             }
         ],
         external: [
@@ -46,6 +50,11 @@ export default <RollupOptions[]>[
             pluginBabel({
                 babelHelpers: "bundled",
                 configFile: "./.babelrc.js"
+            }),
+            pluginCommonJS({
+                extensions: [
+                    ".js", ".ts"
+                ]
             }),
             pluginAlias({
                 entries: {
