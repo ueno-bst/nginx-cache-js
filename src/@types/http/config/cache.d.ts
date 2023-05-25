@@ -1,8 +1,8 @@
 declare namespace HTTP.Config {
     interface Cache {
-        debug: boolean,
+        disable: boolean,
         expire: CacheExpire,
-        rule: CacheRule
+        rule: CacheRule,
     }
 
     interface CacheExpire {
@@ -27,7 +27,7 @@ declare namespace HTTP.Config {
         toString(): string;
     }
 
-    type CacheRuleArgs = {[key in string]: (string|undefined)[]};
+    type CacheRuleArgs = { [key in string]: (string | undefined)[] };
 
     type CacheRuleType = "none" | "all" | "include" | "exclude"
 }
