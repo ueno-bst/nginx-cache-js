@@ -1,5 +1,6 @@
 declare namespace HTTP.Config {
     interface Cache {
+        debug: boolean,
         expire: CacheExpire,
         rule: CacheRule
     }
@@ -18,7 +19,15 @@ declare namespace HTTP.Config {
     interface CacheRuleNode {
         type: CacheRuleType,
         pattern: string[],
+
+        get(r: NginxHTTPRequest): HTTP.Config.CacheValue;
     }
+
+    interface CacheValue {
+        toString(): string;
+    }
+
+    type CacheRuleArgs = {[key in string]: (string|undefined)[]};
 
     type CacheRuleType = "none" | "all" | "include" | "exclude"
 }

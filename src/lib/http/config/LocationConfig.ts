@@ -20,6 +20,10 @@ export class LocationConfig implements HTTP.Config.Location {
         this.cache = new CacheConfig(location.cache, this);
     }
 
+    /**
+     * 現在のURIがLocationと一致するか
+     * @param uri
+     */
     public test(uri: string): boolean {
         const items = this.uri;
 
@@ -30,12 +34,19 @@ export class LocationConfig implements HTTP.Config.Location {
         for (let i = 0; i < items.length; i++) {
             const r = new RegExp(items[i], "i");
 
-            const a = /asdasd/i
-            if (uri.match(a)) {
+            if (uri.match(r)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public getHost(r: NginxHTTPRequest): string {
+        return this.context.getHost(r);
+    }
+
+    public getCacheKey(r: NginxHTTPRequest) {
+        return this.cache.getKey(r);
     }
 }

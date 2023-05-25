@@ -37,4 +37,37 @@ export class ConfigObject implements HTTP.Config.Root {
         }
     }
 
+    public getHost(r: NginxHTTPRequest): string {
+        const
+            server = this.server,
+            scheme = r.variables.scheme ?? "http",
+            host = server.host !== '' ? server.host : (r.variables.host ?? 'localhost');
+
+        r.warn(scheme + "://" + host);
+        return scheme + "://" + host;
+    }
+
+    public getCurrentLocation(r: NginxHTTPRequest): LocationConfig {
+        const location = this.location;
+        for (let l of location) {
+            if (l.test(r.uri)) {
+                return l;
+            }
+        }
+
+        return new LocationConfig({}, this);
+    }
+
+    public getCachePurgeKey(r: NginxHTTPRequest) {
+        const
+            _uri =  r.variables['njs_http_cache_purge_uri'],
+            uri = _uri && _uri !== "" ? _uri : r.uri,
+            host = this.getHost(r);
+
+        if (uri.endsWith("*")) {
+            return host + uri;
+        } else {
+            return host + uri + "#*";
+        }
+    }
 }
