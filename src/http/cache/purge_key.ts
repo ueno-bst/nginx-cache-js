@@ -8,6 +8,7 @@ export function purge_key(r: NginxHTTPRequest) {
             purge_key = config.getCachePurgeKey(r);
 
         if (purge_key) {
+            r.variables.njs_http_cache_purge_key = purge_key;
             return purge_key;
         }
     }
