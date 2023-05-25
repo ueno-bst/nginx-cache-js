@@ -1,11 +1,12 @@
 {
     "name": "localhost",
     "description": "localhost description",
-    "server_name": "localhost",
-    "server_alias": [
-        "localhost",
-        "localhost.localdomain"
-    ],
+    "server": {
+        "host": "localhost2",
+        "alias": [
+            "localhost.localdomain"
+        ]
+    },
     "location": [
         {
             "name": "wp-meta",
@@ -22,9 +23,10 @@
                     "max": 31536000
                 },
                 "rule": {
-                    "headers": {
+                    "header": {
                         "type": "none",
                         "pattern": [
+                            "accept-encoding"
                         ]
                     },
                     "args": {
@@ -32,8 +34,44 @@
                         "pattern": [
                         ]
                     },
-                    "cookies": {
-                        "type": "include"
+                    "cookie": {
+                        "type": "none"
+                    }
+                }
+            }
+        },
+        {
+            "name": "njs-test",
+            "description": "ngsadsad",
+            "uri": [
+                "^/njs/.*"
+            ],
+            "cache": {
+                "expire": {
+                    "min": 0,
+                    "max": 31536000
+                },
+                "rule": {
+                    "args": {
+                        "type": "include",
+                        "pattern": [
+                            "aaa"
+                        ]
+                    },
+                    "header": {
+                        "type": "include",
+                        "pattern": [
+                            "Accept-Encoding",
+                            "User_Agent"
+                        ]
+                    },
+                    "cookie": {
+                        "type": "include",
+                        "pattern": [
+                            "lately",
+                            "wp_lang",
+                            "wordpress_*"
+                        ]
                     }
                 }
             }
