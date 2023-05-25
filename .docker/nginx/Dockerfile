@@ -2,6 +2,8 @@ FROM nginx:mainline as builder
 
 ARG ENABLED_MODULES
 
+## @see https://github.com/nginxinc/docker-nginx/tree/master/modules
+
 RUN set -ex \
     && if [ "$ENABLED_MODULES" = "" ]; then \
         echo "No additional modules enabled, exiting"; \
