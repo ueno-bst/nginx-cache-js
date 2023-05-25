@@ -1,6 +1,7 @@
 import pluginNodeResolve from "@rollup/plugin-node-resolve";
 import pluginBabel from "@rollup/plugin-babel";
 import pluginTypescript from "@rollup/plugin-typescript";
+import pluginAlias from "@rollup/plugin-alias";
 import pkg from "./package.json" assert {type: "json"};
 import {RollupOptions} from "rollup";
 
@@ -24,7 +25,6 @@ const fixExportDefault = () => ({
 export default <RollupOptions[]>[
     {
         input: './src/http/cache.ts',
-        // input: './src/test.js',
         output: [
             {
                 file: './dist/http/cache.js',
@@ -32,12 +32,6 @@ export default <RollupOptions[]>[
                 sourcemap: false,
                 exports: "default",
                 plugins: []
-            },
-            {
-                file: './dist/http/cache.cjs',
-                format: "cjs",
-                sourcemap: false,
-                exports: "default",
             }
         ],
         external: [
@@ -52,6 +46,11 @@ export default <RollupOptions[]>[
             pluginBabel({
                 babelHelpers: "bundled",
                 configFile: "./.babelrc.js"
+            }),
+            pluginAlias({
+                entries: {
+                    '~': './src'
+                }
             })
         ]
     }

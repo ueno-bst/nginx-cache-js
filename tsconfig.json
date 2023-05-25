@@ -5,6 +5,11 @@
         "lib": [
             "esnext"
         ],
+        "paths": {
+            "~/*": [
+                "src/*"
+            ]
+        },
         "moduleResolution": "Node",
         "sourceMap": false,
         "baseUrl": "./",
