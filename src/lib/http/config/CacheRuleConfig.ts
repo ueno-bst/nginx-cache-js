@@ -1,6 +1,5 @@
-import {CacheConfig} from "./CacheConfig";
-import {CacheValue} from "./CacheValue";
-
+import {CacheConfig} from "~/lib/http/config/CacheConfig";
+import {CacheValue} from "~/lib/http/config/CacheValue";
 
 export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
     private context: CacheConfig;

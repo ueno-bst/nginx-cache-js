@@ -1,5 +1,3 @@
-type CacheValueType = { key: string, values: (string | undefined)[] };
-
 export class CacheValue implements HTTP.Config.CacheValue {
     private readonly values: HTTP.Config.CacheRuleArgs;
 

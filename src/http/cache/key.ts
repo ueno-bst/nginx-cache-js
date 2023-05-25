@@ -1,6 +1,6 @@
-import {ConfigObject} from "../../lib/http/config";
+import {ConfigObject} from "~/lib/http/config";
 
-export function cache_key(r: NginxHTTPRequest) {
+export function key(r: NginxHTTPRequest) {
     const config = ConfigObject.load("/etc/nginx/config.json");
 
     if (config) {

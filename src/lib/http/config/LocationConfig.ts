@@ -1,5 +1,6 @@
-import {CacheConfig} from "./CacheConfig";
-import {ConfigObject} from "../config";
+import {ConfigObject} from "~/lib/http/config";
+import {CacheConfig} from "~/lib/http/config/CacheConfig";
+
 
 export class LocationConfig implements HTTP.Config.Location {
     public readonly context: ConfigObject;

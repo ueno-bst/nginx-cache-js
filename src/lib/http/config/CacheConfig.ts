@@ -1,5 +1,5 @@
-import {LocationConfig} from "./LocationConfig";
-import {CacheRuleArgsConfig, CacheRuleCookieConfig, CacheRuleHeaderConfig} from "./CacheRuleConfig";
+import {LocationConfig} from "~/lib/http/config/LocationConfig";
+import {CacheRuleArgsConfig, CacheRuleCookieConfig, CacheRuleHeaderConfig} from "~/lib/http/config/CacheRuleConfig";
 
 export class CacheConfig implements HTTP.Config.Cache {
     public readonly context: LocationConfig;

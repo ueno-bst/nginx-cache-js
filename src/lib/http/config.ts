@@ -1,4 +1,5 @@
-import {LocationConfig} from "./config/LocationConfig";
+import {LocationConfig} from "~/lib/http/config/LocationConfig";
+
 
 export class ConfigObject implements HTTP.Config.Root {
     public static load(path: string): ConfigObject | null {

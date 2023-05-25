@@ -1,5 +1,7 @@
-import {cache_key as key} from "./cache/key";
-import {cache_purge_key as purge_key} from "./cache/purge_key";
+// noinspection JSUnusedGlobalSymbols
+
+import {key} from "~/http/cache/key";
+import {purge_key} from "~/http/cache/purge_key";
 
 export default {
     key,
