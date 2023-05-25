@@ -1,17 +1,19 @@
 import {LocationConfig} from "~/lib/http/config/LocationConfig";
 import {CacheRuleArgsConfig, CacheRuleCookieConfig, CacheRuleHeaderConfig} from "~/lib/http/config/CacheRuleConfig";
+import toBoolean from "~/lib/helper/toBoolean";
 
 export class CacheConfig implements HTTP.Config.Cache {
-    public readonly context: LocationConfig;
+    private readonly context: LocationConfig;
 
-    public readonly debug: boolean;
+    public readonly disable: boolean;
+
     expire: CacheExpireConfig;
     rule: HTTP.Config.CacheRule;
 
     constructor(cache: Partial<HTTP.Config.Cache> | undefined, context: LocationConfig) {
         this.context = context;
 
-        this.debug = cache?.debug ?? false;
+        this.disable = toBoolean(cache?.disable);
 
         this.expire = new CacheExpireConfig(cache?.expire, this);
 
@@ -23,16 +25,17 @@ export class CacheConfig implements HTTP.Config.Cache {
     }
 
     public getKey(r: NginxHTTPRequest) {
+        if (this.disable) {
+            return "";
+        }
+
         const
-            uri = this.context.getHost(r) + r.uri + "#",
-            attribute = this.getAttribute(r),
-            raw = uri + (attribute === "" ? "" : attribute),
-            key = uri + (attribute === "" ? "" : sha256(attribute));
+            uri = this.context.getHost(r) + r.uri,
+            attribute = this.getAttribute(r);
 
-        r.variables['njs_http_cache_key_raw'] = raw;
-        r.variables['njs_http_cache_key'] = key;
+        r.variables.njs_http_cache_key_raw = buildCacheKey(uri, attribute);
 
-        return key;
+        return r.variables.njs_http_cache_key = buildCacheKey(uri, attribute, true);
     }
 
     public getAttribute(r: NginxHTTPRequest): string {
@@ -56,10 +59,6 @@ export class CacheConfig implements HTTP.Config.Cache {
 
         return attributes.join(";");
     }
-
-    public getPurgeKey(r: NginxHTTPRequest) {
-        return "";
-    }
 }
 
 class CacheExpireConfig implements HTTP.Config.CacheExpire {
@@ -76,6 +75,9 @@ class CacheExpireConfig implements HTTP.Config.CacheExpire {
     }
 }
 
+function buildCacheKey(uri: string, attribute: string, crypto: boolean = false) {
+    return uri + "#" + (attribute === "" ? "" : (crypto ? sha256(attribute) : attribute));
+}
 
 function sha256(text: string): string {
     return require('crypto').createHash('sha256').update(text).digest('hex');

@@ -1,7 +1,6 @@
 import {ConfigObject} from "~/lib/http/config";
 import {CacheConfig} from "~/lib/http/config/CacheConfig";
 
-
 export class LocationConfig implements HTTP.Config.Location {
     public readonly context: ConfigObject;
 
@@ -18,7 +17,11 @@ export class LocationConfig implements HTTP.Config.Location {
 
         this.uri = location.uri ?? [];
 
-        this.cache = new CacheConfig(location.cache, this);
+        if (location.cache) {
+            this.cache = new CacheConfig(location.cache, this);
+        } else {
+            this.cache = new CacheConfig({disable: true}, this);
+        }
     }
 
     /**

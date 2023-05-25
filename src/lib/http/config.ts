@@ -1,4 +1,5 @@
 import {LocationConfig} from "~/lib/http/config/LocationConfig";
+import toBoolean from "~/lib/helper/toBoolean";
 
 
 export class ConfigObject implements HTTP.Config.Root {
@@ -22,6 +23,8 @@ export class ConfigObject implements HTTP.Config.Root {
 
     public readonly server: HTTP.Config.Server;
 
+    public readonly debug: boolean;
+
     constructor(config: Partial<HTTP.Config.Root>) {
         this.name = config.name ?? "";
         this.description = config.description ?? "";
@@ -36,32 +39,53 @@ export class ConfigObject implements HTTP.Config.Root {
                 this.location.push(new LocationConfig(config.location[index], this));
             }
         }
+
+        this.debug = toBoolean(config?.debug);
+    }
+
+    public getDomain(r: NginxHTTPRequest): string {
+        const server = this.server;
+        return server.host !== "" ? server.host : (r.variables.host ?? 'localhost');
     }
 
     public getHost(r: NginxHTTPRequest): string {
         const
-            server = this.server,
             scheme = r.variables.scheme ?? "http",
-            host = server.host !== '' ? server.host : (r.variables.host ?? 'localhost');
+            domain = this.getDomain(r);
 
-        r.warn(scheme + "://" + host);
-        return scheme + "://" + host;
+        return scheme + "://" + domain;
     }
 
+    private _location?: LocationConfig;
+
     public getCurrentLocation(r: NginxHTTPRequest): LocationConfig {
-        const location = this.location;
-        for (let l of location) {
-            if (l.test(r.uri)) {
-                return l;
+        if (!this._location) {
+            let _l :LocationConfig|null = null;
+
+            const location = this.location;
+
+            for (let l of location) {
+                if (l.test(r.uri)) {
+                    _l = l;
+                    break;
+                }
             }
+
+            if (!_l) {
+                _l = new LocationConfig({}, this);
+            }
+
+            this._location = _l;
+
+            r.variables.njs_http_location = this.getDomain(r) + ":" + (_l.name === "" ? "*undefined*" : _l.name);
         }
 
-        return new LocationConfig({}, this);
+        return this._location;
     }
 
     public getCachePurgeKey(r: NginxHTTPRequest) {
         const
-            _uri =  r.variables['njs_http_cache_purge_uri'],
+            _uri = r.variables['njs_http_cache_purge_uri'],
             uri = _uri && _uri !== "" ? _uri : r.uri,
             host = this.getHost(r);
 
