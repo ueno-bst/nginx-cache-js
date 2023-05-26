@@ -1,14 +1,17 @@
 import {ConfigObject} from "~/lib/http/config";
+import request from "~/lib/request";
 
 export function key(r: NginxHTTPRequest) {
-    const config = ConfigObject.load("/etc/nginx/config.json");
+    return request(r, (r) => {
+        const
+            path = r.variables.njs_http_config ?? '',
+            config = ConfigObject.load(path);
 
-    if (config) {
         r.variables.njs_http_debug = config.debug ? "1" : "";
 
         const
-            loc = config.getCurrentLocation(r),
-            key = loc.getCacheKey(r);
+            loc = config.getCurrentLocation(),
+            key = loc.getCacheKey();
 
         if (key !== "") {
             r.variables.njs_http_cache_bypass = "0";
@@ -16,8 +19,8 @@ export function key(r: NginxHTTPRequest) {
 
             return key;
         }
-    }
 
-    return "";
+        return "";
+    });
 }
 

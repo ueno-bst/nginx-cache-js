@@ -1,5 +1,6 @@
 import {CacheConfig} from "~/lib/http/config/CacheConfig";
 import {CacheValue} from "~/lib/http/config/CacheValue";
+import {r} from "~/lib/request";
 
 export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
     private context: CacheConfig;
@@ -17,7 +18,7 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
         this.pattern = (node?.pattern ?? []).map(v => this.sanitizeKey(v));
     }
 
-    abstract values(r: NginxHTTPRequest): HTTP.Config.CacheRuleArgs;
+    abstract values(): HTTP.Config.CacheRuleArgs;
 
     sanitizeKey(key: string): string {
         return key;
@@ -45,14 +46,14 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
         return match.test(this.sanitizeKey(key));
     }
 
-    get(r: NginxHTTPRequest): HTTP.Config.CacheValue {
+    get(): HTTP.Config.CacheValue {
         const type = this.type;
 
         if (type === "none") {
             return new CacheValue({});
         }
 
-        const values = this.values(r),
+        const values = this.values(),
             result: HTTP.Config.CacheRuleArgs = {};
 
         if (type === "all") {
@@ -79,7 +80,7 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
 }
 
 export class CacheRuleHeaderConfig extends CacheRuleConfig {
-    values(r: NginxHTTPRequest): HTTP.Config.CacheRuleArgs {
+    values(): HTTP.Config.CacheRuleArgs {
         const values: HTTP.Config.CacheRuleArgs = {};
 
         for (let key in r.headersIn) {
@@ -100,7 +101,7 @@ export class CacheRuleHeaderConfig extends CacheRuleConfig {
 }
 
 export class CacheRuleCookieConfig extends CacheRuleConfig {
-    values(r: NginxHTTPRequest): HTTP.Config.CacheRuleArgs {
+    values(): HTTP.Config.CacheRuleArgs {
         const
             values: HTTP.Config.CacheRuleArgs = {},
             src = r.headersIn.Cookie;
@@ -121,7 +122,7 @@ export class CacheRuleCookieConfig extends CacheRuleConfig {
 
 export class CacheRuleArgsConfig extends CacheRuleConfig {
 
-    values(r: NginxHTTPRequest): HTTP.Config.CacheRuleArgs {
+    values(): HTTP.Config.CacheRuleArgs {
         const
             values: HTTP.Config.CacheRuleArgs = {},
             src = r.variables.args;

@@ -1,19 +1,22 @@
 import {ConfigObject} from "~/lib/http/config";
+import request from "~/lib/request";
 
 export function purge_key(r: NginxHTTPRequest) {
-    const config = ConfigObject.load("/etc/nginx/config.json");
-
-    if (config) {
+    return request(r, (r) => {
         const
-            purge_key = config.getCachePurgeKey(r);
+            path = r.variables.njs_http_config ?? '',
+            config = ConfigObject.load(path);
+
+        const
+            purge_key = config.getCachePurgeKey();
 
         if (purge_key) {
             r.variables.njs_http_cache_purge_key = purge_key;
             return purge_key;
         }
-    }
 
-    return "";
+        return "";
+    });
 }
 
 

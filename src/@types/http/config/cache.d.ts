@@ -20,7 +20,7 @@ declare namespace HTTP.Config {
         type: CacheRuleType,
         pattern: string[],
 
-        get(r: NginxHTTPRequest): HTTP.Config.CacheValue;
+        get(): HTTP.Config.CacheValue;
     }
 
     interface CacheValue {

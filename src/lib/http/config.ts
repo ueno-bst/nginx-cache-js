@@ -1,20 +1,11 @@
 import {LocationConfig} from "~/lib/http/config/LocationConfig";
 import toBoolean from "~/lib/helper/toBoolean";
-
+import loadConfig from "~/lib/helper/loadConfig";
+import {r} from "~/lib/request";
 
 export class ConfigObject implements HTTP.Config.Root {
-    public static load(path: string): ConfigObject | null {
-        const fs = require('fs');
-
-        try {
-            fs.accessSync(path, fs.constants.R_OK);
-            const buffer = fs.readFileSync(path, 'utf8');
-
-            return new ConfigObject(JSON.parse(buffer));
-        } catch {
-        }
-
-        return null;
+    public static load(path: string): ConfigObject {
+        return new ConfigObject(loadConfig(path));
     }
 
     public readonly name: string;
@@ -26,7 +17,7 @@ export class ConfigObject implements HTTP.Config.Root {
     public readonly debug: boolean;
 
     constructor(config: Partial<HTTP.Config.Root>) {
-        this.name = config.name ?? "";
+        this.name = config.name ?? r.variables.host ?? "localhost";
         this.description = config.description ?? "";
 
         this.server = {
@@ -43,24 +34,24 @@ export class ConfigObject implements HTTP.Config.Root {
         this.debug = toBoolean(config?.debug);
     }
 
-    public getDomain(r: NginxHTTPRequest): string {
+    public getDomain(): string {
         const server = this.server;
         return server.host !== "" ? server.host : (r.variables.host ?? 'localhost');
     }
 
-    public getHost(r: NginxHTTPRequest): string {
+    public getHost(): string {
         const
             scheme = r.variables.scheme ?? "http",
-            domain = this.getDomain(r);
+            domain = this.getDomain();
 
         return scheme + "://" + domain;
     }
 
     private _location?: LocationConfig;
 
-    public getCurrentLocation(r: NginxHTTPRequest): LocationConfig {
+    public getCurrentLocation(): LocationConfig {
         if (!this._location) {
-            let _l :LocationConfig|null = null;
+            let _l: LocationConfig | null = null;
 
             const location = this.location;
 
@@ -77,17 +68,17 @@ export class ConfigObject implements HTTP.Config.Root {
 
             this._location = _l;
 
-            r.variables.njs_http_location = this.getDomain(r) + ":" + (_l.name === "" ? "*undefined*" : _l.name);
+            r.variables.njs_http_location = this.name + ":" + (_l.name === "" ? "*undefined*" : _l.name);
         }
 
         return this._location;
     }
 
-    public getCachePurgeKey(r: NginxHTTPRequest) {
+    public getCachePurgeKey() {
         const
             _uri = r.variables['njs_http_cache_purge_uri'],
             uri = _uri && _uri !== "" ? _uri : r.uri,
-            host = this.getHost(r);
+            host = this.getHost();
 
         if (uri.endsWith("*")) {
             return host + uri;

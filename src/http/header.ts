@@ -1,7 +1,7 @@
 import {isUndefined} from "lodash-es";
 import toBoolean from "~/lib/helper/toBoolean";
 
-export function header(r: NginxHTTPRequest) {
+function output(r: NginxHTTPRequest) {
     if (toBoolean(r.variables.njs_http_debug)) {
         r.headersOut['X-Server-Location'] = r.variables.njs_http_location;
         r.headersOut['X-Cache-Key'] = r.variables.njs_http_cache_key_raw;
@@ -30,3 +30,5 @@ function age(r: NginxHTTPRequest) {
         }
     }
 }
+
+export default {output};

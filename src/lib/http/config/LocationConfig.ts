@@ -46,11 +46,11 @@ export class LocationConfig implements HTTP.Config.Location {
         return false;
     }
 
-    public getHost(r: NginxHTTPRequest): string {
-        return this.context.getHost(r);
+    public getHost(): string {
+        return this.context.getHost();
     }
 
-    public getCacheKey(r: NginxHTTPRequest) {
-        return this.cache.getKey(r);
+    public getCacheKey() {
+        return this.cache.getKey();
     }
 }
