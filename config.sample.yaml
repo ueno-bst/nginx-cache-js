@@ -1,0 +1,53 @@
+name: "local.com"
+description: "localhost description by yaml"
+debug: false
+server:
+  host: localhost
+  alias:
+    - localhost.localdomain
+location:
+  - name: meta
+    description: Wordpress meta files,
+    uri:
+      - ^/wp-include/.*$
+      - ^/wp-content/.*$
+      - ^/wp-content/.*$
+      - ^/wp-admin/load-(styles|scripts)\.php$
+      - ^.*\.(css|js|png|jpe?g|gif|webp|avif|gz|br|ico|svg)$
+    cache:
+      expire:
+        min: 0
+        max: 31536000
+      rule:
+        header:
+          type: none
+          pattern:
+            - accept-encoding
+        args:
+          type: all
+          pattern:
+        cookie:
+          type: none
+  - name: admin
+    description: Wordpress Admin View
+    uri:
+      - ^/wp-admin/
+  - name: front
+    description: Wordpress Front View
+    uri:
+      - .*
+    cache:
+      disable: false
+      rule:
+        args:
+          type: all
+        header:
+          type: include
+          pattern:
+            - authorization
+        cookie:
+          type: include
+          pattern:
+            - wordpress_logged_in_*
+            - comment_*
+            - wp-settings-*

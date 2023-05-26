@@ -16,7 +16,7 @@
                 "^/wp-include/.*$",
                 "^/wp-content/.*$",
                 "^/wp-admin/load-(styles|scripts)\\.php$",
-                "^.*\\.(css|js|png|jpe?g|gif|webp|avif|gz|br|ico)$"
+                "^.*\\.(css|js|png|jpe?g|gif|webp|avif|gz|br|ico|svg)$"
             ],
             "cache": {
                 "expire": {

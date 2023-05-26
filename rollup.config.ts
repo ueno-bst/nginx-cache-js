@@ -1,9 +1,9 @@
-import pluginNodeResolve from "@rollup/plugin-node-resolve";
-import pluginBabel from "@rollup/plugin-babel";
-import pluginTypescript from "@rollup/plugin-typescript";
-import pluginCommonJS from "@rollup/plugin-commonjs";
-import pluginAlias from "@rollup/plugin-alias";
-import pluginTeaser from "@rollup/plugin-terser";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import babel from "@rollup/plugin-babel";
+import typescript from "@rollup/plugin-typescript";
+import commonJS from "@rollup/plugin-commonjs";
+import alias from "@rollup/plugin-alias";
+import teaser from "@rollup/plugin-terser";
 import pkg from "./package.json" assert {type: "json"};
 import {RollupOptions} from "rollup";
 
@@ -24,43 +24,53 @@ const fixExportDefault = () => ({
     }),
 })
 
-export default <RollupOptions[]>[
-    {
-        input: './src/http/cache.ts',
-        output: [
-            {
-                file: './dist/http/cache.js',
-                format: "es",
-                sourcemap: false,
-                exports: "default",
-                plugins: [
-                    pluginTeaser()
-                ]
+const buildOption = (input: string, output: string): RollupOptions => ({
+    input: input,
+    output: [
+        {
+            file: output,
+            format: "es",
+            sourcemap: false,
+            exports: "default",
+            plugins: [
+                teaser({
+                    format: {
+                        comments: false,
+                    },
+                    compress: true,
+                })
+            ]
+        }
+    ],
+    external: [
+        ...Object.keys(pkg.devDependencies || {}),
+    ],
+    plugins: [
+        fixExportDefault(),
+        nodeResolve({
+            browser: false,
+        }),
+        typescript(),
+        babel({
+            babelHelpers: "bundled",
+            configFile: "./.babelrc.js"
+        }),
+        commonJS({
+            extensions: [
+                ".js", ".ts"
+            ]
+        }),
+        alias({
+            entries: {
+                '~': './src'
             }
-        ],
-        external: [
-            ...Object.keys(pkg.devDependencies || {}),
-        ],
-        plugins: [
-            fixExportDefault(),
-            pluginNodeResolve({
-                browser: false,
-            }),
-            pluginTypescript(),
-            pluginBabel({
-                babelHelpers: "bundled",
-                configFile: "./.babelrc.js"
-            }),
-            pluginCommonJS({
-                extensions: [
-                    ".js", ".ts"
-                ]
-            }),
-            pluginAlias({
-                entries: {
-                    '~': './src'
-                }
-            })
-        ]
-    }
+        })
+    ]
+});
+
+export default <RollupOptions[]>[
+    buildOption('./src/http.ts', './dist/http.js'),
+    buildOption('./src/http/config.ts', './dist/http/config.js'),
+    buildOption('./src/http/cache.ts', './dist/http/cache.js'),
+    buildOption('./src/http/header.ts', './dist/http/header.js'),
 ];
