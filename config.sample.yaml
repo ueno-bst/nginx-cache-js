@@ -1,11 +1,16 @@
 name: "local.com"
 description: "localhost description by yaml"
-debug: false
+debug: true
 server:
   host: localhost
   alias:
     - localhost.localdomain
 location:
+  - name: bypass
+    uri:
+      - ^/test/
+    cache:
+      disable: true
   - name: meta
     description: Wordpress meta files,
     uri:
