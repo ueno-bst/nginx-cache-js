@@ -1,9 +1,13 @@
-import {isEmpty} from "lodash-es";
+import {isEmpty, isObject} from "lodash-es";
 import NJSError from "~/lib/error/NJSError";
 import yaml from "js-yaml";
 
 export default <T extends object>(path: string): T => {
     const fs = require('fs');
+
+    if (global.http_config && isObject(global.http_config)) {
+        return JSON.parse(JSON.stringify(http_config)) as T;
+    }
 
     // パスの存在確認
     if (isEmpty(path)) {

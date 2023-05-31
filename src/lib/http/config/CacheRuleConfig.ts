@@ -1,6 +1,7 @@
 import {CacheConfig} from "~/lib/http/config/CacheConfig";
 import {CacheValue} from "~/lib/http/config/CacheValue";
 import {r} from "~/lib/request";
+import {isArray} from "lodash-es";
 
 export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
     private context: CacheConfig;
@@ -15,7 +16,10 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
         this.context = context;
 
         this.type = node?.type ?? type;
-        this.pattern = (node?.pattern ?? []).map(v => this.sanitizeKey(v));
+
+        const pattern = node?.pattern;
+
+        this.pattern = (isArray(pattern) ? pattern : []).map(v => this.sanitizeKey(v));
     }
 
     abstract values(): HTTP.Config.CacheRuleArgs;
