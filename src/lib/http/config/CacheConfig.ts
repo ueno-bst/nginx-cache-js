@@ -77,7 +77,8 @@ class CacheExpireConfig implements HTTP.Config.CacheExpire {
 }
 
 function buildCacheKey(uri: string, attribute: string, crypto: boolean = false) {
-    return uri + "#" + (attribute === "" ? "" : (crypto ? sha256(attribute) : attribute));
+    return uri + "#" + attribute;
+    // return uri + "#" + (attribute === "" ? "" : (crypto ? sha256(attribute) : attribute));
 }
 
 function sha256(text: string): string {
