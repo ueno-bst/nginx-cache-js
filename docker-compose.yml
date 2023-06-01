@@ -18,17 +18,22 @@ services:
     depends_on:
       - wordpress
   wordpress:
-    image: wordpress:6.2.2-php8.2-apache
+    build:
+      context: .docker/wordpress
+      dockerfile: Dockerfile
     volumes:
       - "./.wp:/var/www/html"
       - "./wp-plugins/harpoon-proxy-cache-purge:/var/www/html/wp-content/plugins/harpoon-proxy-cache-purge"
     environment:
-      WORPDRESS_DB_HOST: mysql
+      WORPDRESS_DB_HOST: "${DB_HOST:-mysql}:${DB_PORT:-3306}"
       WORDPRESS_DB_USER: "${DB_USER:-wordpress}"
       WORDPRESS_DB_PASSWORD: "${DB_PASSWORD:-wordpress}"
       WORDPRESS_DB_NAME: "${DB_NAME:-wordpress}"
-      WORDPRESS_DEBUG: true
+      WORDPRESS_DEBUG: "${WP_DEBUG:-}"
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      XDEBUG_SESSION: "${XDEBUG_IDE_KEY:-ANY}"
+      XDEBUG_CONFIG: "client_host=${XDEBUG_CLIENT:-host.docker.internal} client_port=${XDEBUG_PORT:-9003}"
+    user: "${DOCKER_USER:-1000}:${DOCKER_GROUP:-1000}"
     depends_on:
       mysql:
         condition: service_healthy

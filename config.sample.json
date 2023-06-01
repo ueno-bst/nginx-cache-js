@@ -55,7 +55,7 @@
                 ".*"
             ],
             "cache": {
-                "disable": false,
+                "disable": true,
                 "rule": {
                     "args": {
                         "type": "all"
