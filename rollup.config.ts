@@ -70,7 +70,4 @@ const buildOption = (input: string, output: string): RollupOptions => ({
 
 export default <RollupOptions[]>[
     buildOption('./src/http.ts', './dist/http.js'),
-    buildOption('./src/http/config.ts', './dist/http/config.js'),
-    buildOption('./src/http/cache.ts', './dist/http/cache.js'),
-    buildOption('./src/http/header.ts', './dist/http/header.js'),
 ];
