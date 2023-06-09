@@ -34,17 +34,17 @@ export class ConfigObject implements HTTP.Config.Root {
         this.debug = toBoolean(config?.debug);
     }
 
+    public getScheme(): string {
+        return r.variables.scheme ?? "http";
+    }
+
     public getDomain(): string {
         const server = this.server;
         return server.host !== "" ? server.host : (r.variables.host ?? 'localhost');
     }
 
     public getHost(): string {
-        const
-            scheme = r.variables.scheme ?? "http",
-            domain = this.getDomain();
-
-        return scheme + "://" + domain;
+        return "//" + this.getDomain();
     }
 
     private _location?: LocationConfig;
