@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "js2ts": "json2ts config.schema.json > src/@types/http/config.d.ts",
         "clean": "rimraf dist",
         "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
         "watch": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript --watch"
@@ -28,6 +29,7 @@
         "@types/js-yaml": "^4.0.5",
         "@types/lodash-es": "^4.17.7",
         "@types/node": "^20.2.1",
+        "json-schema-to-typescript": "^13.0.1",
         "njs-types": "^0.7.12",
         "rimraf": "^5.0.1",
         "rollup": "^3.23.0",
