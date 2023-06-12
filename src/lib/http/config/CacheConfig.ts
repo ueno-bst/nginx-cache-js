@@ -2,11 +2,12 @@ import {LocationConfig} from "~/lib/http/config/LocationConfig";
 import {CacheRuleArgsConfig, CacheRuleCookieConfig, CacheRuleHeaderConfig} from "~/lib/http/config/CacheRuleConfig";
 import toBoolean from "~/lib/helper/toBoolean";
 import {r} from "~/lib/request";
+import CacheBypassException from "~/lib/error/CacheBypassException";
 
 export class CacheConfig implements HTTP.Config.Cache {
     private readonly context: LocationConfig;
 
-    public readonly disable: boolean;
+    public readonly enable: boolean;
 
     expire: CacheExpireConfig;
     rule: HTTP.Config.CacheRule;
@@ -14,7 +15,7 @@ export class CacheConfig implements HTTP.Config.Cache {
     constructor(cache: Partial<HTTP.Config.Cache> | undefined, context: LocationConfig) {
         this.context = context;
 
-        this.disable = toBoolean(cache?.disable);
+        this.enable = toBoolean(cache?.enable, true);
 
         this.expire = new CacheExpireConfig(cache?.expire, this);
 
@@ -26,17 +27,25 @@ export class CacheConfig implements HTTP.Config.Cache {
     }
 
     public getKey() {
-        if (this.disable) {
+        if (!this.enable) {
             return "";
         }
 
-        const
-            uri = this.context.getHost() + r.uri,
-            attribute = this.getAttribute();
+        try {
+            const
+                uri = this.context.getHost() + r.uri,
+                attribute = this.getAttribute();
 
-        r.variables.njs_http_cache_key_raw = buildCacheKey(uri, attribute);
+            r.variables.njs_http_cache_key_raw = buildCacheKey(uri, attribute);
 
-        return r.variables.njs_http_cache_key = buildCacheKey(uri, attribute, true);
+            return r.variables.njs_http_cache_key = buildCacheKey(uri, attribute, true);
+        } catch (e) {
+            if (e instanceof CacheBypassException) {
+                return "";
+            } else {
+                throw e;
+            }
+        }
     }
 
     public getAttribute(): string {

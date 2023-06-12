@@ -2,6 +2,7 @@ import {CacheConfig} from "~/lib/http/config/CacheConfig";
 import {CacheValue} from "~/lib/http/config/CacheValue";
 import {r} from "~/lib/request";
 import {isArray} from "lodash-es";
+import CacheBypassException from "~/lib/error/CacheBypassException";
 
 export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
     private context: CacheConfig;
@@ -10,16 +11,23 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
 
     pattern: string[];
 
-    private patternMatch?: RegExp;
+    private patternMatch: RegExp | false | null = null;
+
+    bypass: string[];
+
+    private bypassMatch: RegExp | false | null = null;
 
     constructor(node: Partial<HTTP.Config.CacheRuleNode> | undefined, type: HTTP.Config.CacheRuleType, context: CacheConfig) {
         this.context = context;
 
         this.type = node?.type ?? type;
 
-        const pattern = node?.pattern;
+        const
+            pattern = node?.pattern,
+            bypass = node?.bypass;
 
         this.pattern = (isArray(pattern) ? pattern : []).map(v => this.sanitizeKey(v));
+        this.bypass = (isArray(bypass) ? bypass : []).map(v => this.sanitizeKey(v));
     }
 
     abstract values(): HTTP.Config.CacheRuleArgs;
@@ -29,36 +37,53 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
     }
 
     test(key: string): boolean {
-        if (!this.patternMatch) {
-            const items = [];
-
-            for (let item of this.pattern) {
-                items.push(
-                    item
-                        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-                        .replace(/[?]/g, '.')
-                        .replace(/[*]/g, '.*')
-                );
-            }
-
-            this.patternMatch = new RegExp("^(" + items.join('|') + ")$");
+        if (this.patternMatch === null) {
+            this.patternMatch = toRegex(this.pattern);
         }
 
         const match = this.patternMatch;
+
+        if (match === false) {
+            return false;
+        }
 
 
         return match.test(this.sanitizeKey(key));
     }
 
+    isBypass(key: string): boolean {
+        if (this.bypassMatch === null) {
+            this.bypassMatch = toRegex(this.bypass);
+        }
+
+        const match = this.bypassMatch;
+
+        if (match === false) {
+            return false;
+        }
+
+        return match.test(this.sanitizeKey(key));
+    }
+
+    /**
+     *
+     * @throws CacheBypassException
+     */
     get(): HTTP.Config.CacheValue {
-        const type = this.type;
+        const type = this.type,
+            values = this.values(),
+            result: HTTP.Config.CacheRuleArgs = {};
+
+        // バイパスキーを含むパラメータの存在を確認する
+        for (let key in values) {
+            if (this.isBypass(key)) {
+                throw new CacheBypassException("bypass from " + key);
+            }
+        }
 
         if (type === "none") {
             return new CacheValue({});
         }
-
-        const values = this.values(),
-            result: HTTP.Config.CacheRuleArgs = {};
 
         if (type === "all") {
             return new CacheValue(values);
@@ -81,6 +106,20 @@ export abstract class CacheRuleConfig implements HTTP.Config.CacheRuleNode {
 
         return new CacheValue(result);
     }
+}
+
+function toRegex(values: string[]): RegExp | false {
+    if (values.length === 0) {
+        return false;
+    }
+
+    const items = values.map(v =>
+        v
+            .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+            .replace(/[?]/g, '.')
+            .replace(/[*]/g, '.*'));
+
+    return new RegExp("^(" + items.join('|') + ")$");
 }
 
 export class CacheRuleHeaderConfig extends CacheRuleConfig {

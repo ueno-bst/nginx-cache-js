@@ -1,8 +1,8 @@
 declare namespace HTTP.Config {
     interface Cache {
-        disable: boolean,
+        enable: boolean,
         expire: CacheExpire,
-        rule: CacheRule,
+        rule: CacheRule
     }
 
     interface CacheExpire {
@@ -19,6 +19,7 @@ declare namespace HTTP.Config {
     interface CacheRuleNode {
         type: CacheRuleType,
         pattern: string[],
+        bypass: string[],
 
         get(): HTTP.Config.CacheValue;
     }

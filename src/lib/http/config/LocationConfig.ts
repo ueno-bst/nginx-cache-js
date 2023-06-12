@@ -20,7 +20,7 @@ export class LocationConfig implements HTTP.Config.Location {
         if (location.cache) {
             this.cache = new CacheConfig(location.cache, this);
         } else {
-            this.cache = new CacheConfig({disable: true}, this);
+            this.cache = new CacheConfig({enable: false}, this);
         }
     }
 
