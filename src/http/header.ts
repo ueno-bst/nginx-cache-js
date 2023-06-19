@@ -5,6 +5,7 @@ function output(r: NginxHTTPRequest) {
     if (toBoolean(r.variables.njs_http_debug)) {
         r.headersOut['X-Server-Location'] = r.variables.njs_http_location;
         r.headersOut['X-Cache-Key'] = r.variables.njs_http_cache_key_raw;
+        r.headersOut['X-Cache-Ages'] = r.variables.njs_http_cache_ages;
         r.headersOut['X-Cache-Purge-Key'] = r.variables.njs_http_cache_purge_key;
         r.headersOut['X-Cache-Bypass'] = r.variables.njs_http_cache_bypass;
         r.headersOut['X-Cache-NoCache'] = r.variables.njs_http_cache_nocache;

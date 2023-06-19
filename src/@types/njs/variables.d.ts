@@ -14,5 +14,6 @@ interface NginxVariables {
     njs_http_cache_bypass?: NjsStringLike
     njs_http_cache_nocache?: NjsStringLike
     njs_http_cache_expires?: NjsStringLike
+    njs_http_cache_ages?: NjsStringLike
     njs_http_cache_age?: NjsStringLike
 }
