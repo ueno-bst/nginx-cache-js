@@ -2,6 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "ServerConfig",
     "type": "object",
+    "description": "サーバー設定",
     "allOf": [
         {
             "type": "object",
@@ -30,7 +31,7 @@
                     }
                 },
                 "host": {
-                    "description": "サーバードメイン名\\n最初の値がデフォルトドメインとして使用されます",
+                    "description": "サーバードメイン名\n最初の値がデフォルトドメインとして使用されます",
                     "type": "array",
                     "items": {
                         "type": "string",
@@ -75,6 +76,7 @@
         "LocationConfig": {
             "description": "パス設定",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "name": {
                     "description": "ロケーション識別子",
@@ -85,13 +87,14 @@
                     "type": "string"
                 },
                 "uri": {
+                    "title": "URIConfig",
+                    "description": "URIパターンの定義\n指定がない場合、すべてのパターンにマッチします\n\n1文字目で評価式が変化します\n'=:(pattern) 完全一致\n'~:(regex)' 正規表現\n(なし): 前方一致",
                     "type": "array",
                     "items": {
                         "type": "string"
                     },
                     "uniqueItems": true,
-                    "minItems": 1,
-                    "description": "URIパターンの定義\\n指定がない場合、すべてのパターンにマッチします\\n\\n1文字目で評価式が変化します\\n=: 完全一致\\n~: 正規表現\\n(なし): 前方一致"
+                    "minItems": 1
                 },
                 "cache": {
                     "$ref": "#/definitions/CacheConfig"
@@ -102,6 +105,7 @@
             ]
         },
         "CacheConfig": {
+            "description": "キャッシュ設定",
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -110,12 +114,32 @@
                     "type": "boolean",
                     "default": true
                 },
+                "method": {
+                    "description": "キャッシュ対象とするリクエストメソッド",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "HEAD",
+                            "GET",
+                            "POST",
+                            "PUT",
+                            "PATCH",
+                            "DELETE",
+                            "TRACE",
+                            "LINK",
+                            "UNLINK",
+                            "OPTIONS"
+                        ]
+                    }
+                },
                 "expire": {
+                    "title": "Expire Config",
                     "description": "有効期限設定",
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
-                        "def": {
+                        "default": {
                             "description": "標準の有効期限",
                             "type": "integer",
                             "minimum": 0,
@@ -152,6 +176,7 @@
             }
         },
         "CacheRuleConfig": {
+            "description": "キャッシュルール設定",
             "type": "object",
             "additionalProperties": false,
             "properties": {
@@ -164,7 +189,7 @@
                         "exclude"
                     ],
                     "default": "none",
-                    "description": "none: パラメータを一切使用しない\\nall: すべてのパラメータをキャッシュパターンに使用する\\ninclude: pattern に指定したパラメータをキャッシュパターンに使用\\nexclude: pattern に指定していないパラメータをキャッシュパターンに使用する"
+                    "description": "パラメータの扱い型設定\n\n'none': パラメータを一切使用しない\n'all': すべてのパラメータをキャッシュパターンに使用する\n'include': pattern に指定したパラメータをキャッシュパターンに使用\n'exclude': pattern に指定していないパラメータをキャッシュパターンに使用する"
                 },
                 "pattern": {
                     "type": "array",
@@ -173,12 +198,12 @@
                     },
                     "description": "キャッシュ作成時の振り分けを行うパターン"
                 },
-                "invalid": {
+                "bypass": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     },
-                    "description": "キャッシュ機能を使用しないパラメータパターン"
+                    "description": "キャッシュ機能を使用しないパラメータパターン ワイルドカードが使用可能です"
                 }
             },
             "required": [
@@ -276,64 +301,51 @@
                 },
                 "access_log": {
                     "description": "アクセスログ設定",
-                    "oneOf": [
-                        {
-                            "type": "boolean",
-                            "enum": [
-                                false
-                            ]
+                    "type": [
+                        "boolean",
+                        "object"
+                    ],
+                    "additionalProperties": false,
+                    "default": true,
+                    "properties": {
+                        "path": {
+                            "description": "ログの出力先",
+                            "type": "string"
                         },
-                        {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "description": "ログの出力先",
-                                    "type": "string"
-                                },
-                                "format": {
-                                    "description": "出力形式名",
-                                    "type": "string",
-                                    "default": "combine"
-                                }
-                            },
-                            "additionalProperties": false
+                        "format": {
+                            "description": "出力形式名",
+                            "type": "string",
+                            "default": "combine"
                         }
-                    ]
+                    }
                 },
                 "error_log": {
                     "description": "エラーログの出力設定",
-                    "oneOf": [
-                        {
-                            "type": "boolean",
-                            "enum": [
-                                false
-                            ]
+                    "type": [
+                        "boolean",
+                        "object"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "path": {
+                            "description": "エラーログの出力先",
+                            "type": "string"
                         },
-                        {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "description": "エラーログの出力先",
-                                    "type": "string"
-                                },
-                                "level": {
-                                    "description": "エラー出力レベル",
-                                    "type": "string",
-                                    "enum": [
-                                        "debug",
-                                        "info",
-                                        "notice",
-                                        "warn",
-                                        "error",
-                                        "crit",
-                                        "alert",
-                                        "emerg"
-                                    ]
-                                }
-                            },
-                            "additionalProperties": false
+                        "level": {
+                            "description": "エラー出力レベル",
+                            "type": "string",
+                            "enum": [
+                                "debug",
+                                "info",
+                                "notice",
+                                "warn",
+                                "error",
+                                "crit",
+                                "alert",
+                                "emerg"
+                            ]
                         }
-                    ]
+                    }
                 }
             }
         }
