@@ -16,7 +16,7 @@ local function sanitizeUrl(v)
     local pos, len = string.find(v, "://")
 
     if pos == nil then
-        return nil, "No schema in URL"
+        return nil, "Not a fully qualified URL."
     end
 
     v = "//" .. string.sub(v, len + 1)
@@ -87,6 +87,7 @@ local function sanitizeTable(t)
         end
 
         if key == nil or not (type(keys[key]) == "nil") then
+            table.insert(values, { src = origin, valid = false, key = key, message = "Duplicate purge URL" })
             goto continue
         end
 
@@ -112,7 +113,7 @@ local function sanitizeTable(t)
                 if not (i == j) and v2.valid == true then
                     if string.find(v2.key, k, 1, true) == 1 then
                         v2.valid = false
-                        v2.message = "Duplicate Request from " .. v1.src
+                        v2.message = "Excluded because included in other requests from " .. v1.src
                     end
                 end
             end
