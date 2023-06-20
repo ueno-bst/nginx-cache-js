@@ -163,11 +163,12 @@ if err then
 end
 
 local data = {}
-local excludes = {}
+
+local begin = ngx.now()
 
 for i, o in pairs(origins) do
     if o.valid == false then
-        excludes[o.src] = o.message
+        data[o.src] = { valid = false, error = o.message }
         goto continue
     end
 
@@ -177,7 +178,13 @@ for i, o in pairs(origins) do
         goto continue
     end
 
-    data[o.src] = 0
+    data[o.src] = {
+        valid = true,
+        count = 0,
+        delay = 0
+    }
+
+    local _begin = ngx.now()
 
     local keys = redis:keys(o.key)
 
@@ -185,12 +192,14 @@ for i, o in pairs(origins) do
         goto continue;
     end
 
-    for i2, k in pairs(keys) do
-        data[o.src] = data[o.src] + 1
+    for _, k in pairs(keys) do
+        data[o.src].count = data[o.src].count + 1
         redis:del(k)
     end
+
+    data[o.src].delay = ngx.now() - _begin
 
     :: continue ::
 end
 
-response(200, { status = "200 OK", data = data, excludes = excludes })
+response(200, { status = "200 OK", data = data, delay = ngx.now() - begin })
