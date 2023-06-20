@@ -36,6 +36,7 @@ services:
         ENABLED_MODULES: "echo srcache redis2 redis cachepurge ndk njs brotli set-misc"
     volumes:
       - "./dist:/etc/nginx/njs"
+      - "./lua:/etc/nginx/lua"
       - "./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf"
       - "./.docker/nginx/conf.d:/etc/nginx/conf.d"
       - "./.docker/nginx/include.d:/etc/nginx/include.d"
