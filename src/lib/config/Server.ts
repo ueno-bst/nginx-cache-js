@@ -88,7 +88,7 @@ export class Server {
      * キャッシュのプレフィックスを追加
      */
     private getCachePrefix(): string {
-        return "nc://" + this.host;
+        return "//" + this.host;
     }
 
     /**
