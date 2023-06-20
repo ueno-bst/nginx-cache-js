@@ -20,11 +20,14 @@ function output(r: NginxHTTPRequest) {
  * Ageヘッダの出力処理
  */
 function age(r: NginxHTTPRequest) {
-    const upstream_http_date = r.variables.upstream_http_date;
+    const
+        upstream_http_date = r.variables.upstream_http_date,
+        http_date = r.headersOut['Date'],
+        date = isUndefined(upstream_http_date) ? http_date : upstream_http_date
 
-    if (!isUndefined(upstream_http_date)) {
+    if (!isUndefined(date)) {
         const
-            diff = Math.floor((Date.now() - Date.parse(upstream_http_date)) / 1E3);
+            diff = Math.floor((Date.now() - Date.parse(date)) / 1E3);
 
         if (diff > 0) {
             r.headersOut['Age'] = diff + "";
