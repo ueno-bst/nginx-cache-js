@@ -8,6 +8,11 @@
             "localhost.localdomain"
         ]
     },
+    "host": [
+        "127.0.1.2",
+        "localhost",
+        "localhost.localdomain"
+    ],
     "location": [
         {
             "name": "meta",
@@ -55,10 +60,13 @@
                 ".*"
             ],
             "cache": {
-                "disable": true,
+                "enable": true,
                 "rule": {
                     "args": {
-                        "type": "all"
+                        "type": "all",
+                        "bypass": [
+                            "preview"
+                        ]
                     },
                     "header": {
                         "type": "include",
@@ -69,9 +77,11 @@
                     "cookie": {
                         "type": "include",
                         "pattern": [
-                            "wordpress_logged_in_*",
                             "comment_*",
                             "wp-settings-*"
+                        ],
+                        "bypass": [
+                            "wordpress_logged_in_*"
                         ]
                     }
                 }

@@ -10,12 +10,11 @@ location:
     uri:
       - ^/test/
     cache:
-      disable: true
+      enable: true
   - name: meta
     description: Wordpress meta files,
     uri:
       - ^/wp-include/.*$
-      - ^/wp-content/.*$
       - ^/wp-content/.*$
       - ^/wp-admin/load-(styles|scripts)\.php$
       - ^.*\.(css|js|png|jpe?g|gif|webp|avif|gz|br|ico|svg)$

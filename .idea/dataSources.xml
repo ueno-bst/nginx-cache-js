@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://127.0.1.2:3307/wordpress</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="redis@127.0.1.2" uuid="f73c7757-f17e-41cc-b930-5284d08e210a">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://127.0.1.2:6379/0</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
