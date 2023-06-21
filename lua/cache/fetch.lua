@@ -14,7 +14,7 @@ end
 -- *******************
 -- キャッシュを取得
 -- *******************
-local value = assert(redis:get("ncache:" .. key))
+local value = assert(redis:get("ngc:" .. key))
 
 if type(value) == "string" and string.len(value) > 0 then
     -- キャッシュ取得に成功

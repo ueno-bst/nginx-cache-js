@@ -26,6 +26,6 @@ values[1] = values[1] .. "\r\nDate: " .. time
 -- *******************
 
 -- キャッシュを保存
-assert(redis:set("ncache:" .. key, values[1] .. "\r\n\r\n" .. values[2]))
+assert(redis:set("ngc:" .. key, values[1] .. "\r\n\r\n" .. values[2]))
 -- キャッシュの有効期限を保存
-assert(redis:expire("ncache:" .. key, 3600))
+assert(redis:expire("ngc:" .. key, 3600))

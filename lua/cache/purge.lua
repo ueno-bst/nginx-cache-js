@@ -56,7 +56,7 @@ local function sanitizeUrl(v)
         v = v .. "#*"
     end
 
-    return "ncache:" .. v, nil
+    return "ngc:" .. v, nil
 end
 
 local function countTable(t)
