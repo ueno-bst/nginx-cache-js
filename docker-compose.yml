@@ -67,3 +67,12 @@ services:
     image: redis:alpine
     ports:
       - "${FORWARD_HOST:-0.0.0.0}:${FORWARD_REDIS_PORT:-6379}:6379"
+  jekyll:
+    build:
+      context: .docker/jekyll
+      dockerfile: Dockerfile
+    volumes:
+      - "./docs:/usr/src/app"
+    command: jekyll serve -s /usr/src/app --watch --verbose --trace
+    ports:
+      - "${FORWARD_HOST:-0.0.0.0}:4000:4000"

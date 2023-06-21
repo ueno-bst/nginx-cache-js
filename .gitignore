@@ -3,3 +3,4 @@
 node_modules/
 wp-plugins/
 dist/
+docs/.jekyll-cache
