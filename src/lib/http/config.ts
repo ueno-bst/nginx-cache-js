@@ -68,7 +68,7 @@ export class ConfigObject implements HTTP.Config.Root {
 
             this._location = _l;
 
-            r.variables.njs_http_location = this.name + ":" + (_l.name === "" ? "*undefined*" : _l.name);
+            r.variables.ngc_location = this.name + ":" + (_l.name === "" ? "*undefined*" : _l.name);
         }
 
         return this._location;
@@ -76,7 +76,7 @@ export class ConfigObject implements HTTP.Config.Root {
 
     public getCachePurgeKey() {
         const
-            _uri = r.variables['njs_http_cache_purge_uri'],
+            _uri = r.variables['ngc_cache_purge_uri'],
             uri = _uri && _uri !== "" ? _uri : r.uri,
             host = this.getHost();
 

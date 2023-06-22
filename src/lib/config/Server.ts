@@ -79,7 +79,7 @@ export class Server {
             uri: ['*'],
         });
 
-        r.variables.njs_http_location = this.name + ":" + current.index + ":" + current.name;
+        r.variables.ngc_location = this.name + ":" + current.index + ":" + current.name;
 
         return this._current = current;
     }
@@ -108,11 +108,14 @@ export class Server {
             uri = this.getCachePrefix() + r.uri,
             key = uri + "#" + (attribute !== "" ? require('crypto').createHash('sha256').update(attribute).digest('hex') : "");
 
-        r.variables.njs_http_cache_ages = cache.expire.min + ":" + cache.expire.default + ":" + cache.expire.max;
-        r.variables.njs_http_cache_key = key;
-        r.variables.njs_http_cache_key_raw = uri + "#" + attribute;
-        r.variables.njs_http_cache_bypass = bypass;
-        r.variables.njs_http_cache_nocache = bypass;
+        r.variables.ngc_cache_min_expire = cache.expire.min + "";
+        r.variables.ngc_cache_default_expire = cache.expire.default + "";
+        r.variables.ngc_cache_max_expire = cache.expire.max + "";
+
+        r.variables.ngc_cache_key = key;
+        r.variables.ngc_cache_key_raw = uri + "#" + attribute;
+        r.variables.ngc_cache_bypass = bypass;
+        r.variables.ngc_cache_nocache = bypass;
 
         return key;
     }
@@ -123,11 +126,11 @@ export class Server {
     public getCachePurgeKey(): string {
         const
             prefix = this.getCachePrefix(),
-            _uri = r.variables['njs_http_cache_purge_uri'],
+            _uri = r.variables['ngc_cache_purge_uri'],
             uri = _uri && _uri !== "" ? _uri : r.uri,
             key = uri.endsWith("*") ? prefix + uri : prefix + uri + "#*";
 
-        r.variables.njs_http_cache_purge_key = key;
+        r.variables.ngc_cache_pure_key_raw = key;
 
         return key;
     }

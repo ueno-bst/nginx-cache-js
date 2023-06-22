@@ -2,13 +2,18 @@ import {isUndefined} from "lodash-es";
 import toBoolean from "~/lib/helper/toBoolean";
 
 function output(r: NginxHTTPRequest) {
-    if (toBoolean(r.variables.njs_http_debug)) {
-        r.headersOut['X-Server-Location'] = r.variables.njs_http_location;
-        r.headersOut['X-Cache-Key'] = r.variables.njs_http_cache_key_raw;
-        r.headersOut['X-Cache-Ages'] = r.variables.njs_http_cache_ages;
-        r.headersOut['X-Cache-Purge-Key'] = r.variables.njs_http_cache_purge_key;
-        r.headersOut['X-Cache-Bypass'] = r.variables.njs_http_cache_bypass;
-        r.headersOut['X-Cache-NoCache'] = r.variables.njs_http_cache_nocache;
+    if (toBoolean(r.variables.ngc_debug)) {
+        r.headersOut['X-Server-Location'] = r.variables.ngc_location;
+
+        r.headersOut['X-Cache-Key'] = r.variables.ngc_cache_key_raw;
+        r.headersOut['X-Cache-Purge-Key'] = r.variables.ngc_cache_pure_key_raw;
+
+        r.headersOut['X-Cache-Bypass'] = r.variables.ngc_cache_bypass;
+        r.headersOut['X-Cache-NoCache'] = r.variables.ngc_cache_nocache;
+
+        r.headersOut['X-Cache-Expire-Min'] = r.variables.ngc_cache_min_expire;
+        r.headersOut['X-Cache-Expire-Default'] = r.variables.ngc_cache_default_expire;
+        r.headersOut['X-Cache-Expire-Max'] = r.variables.ngc_cache_max_expire;
     }
 
     age(r);

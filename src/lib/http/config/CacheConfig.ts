@@ -36,9 +36,9 @@ export class CacheConfig implements HTTP.Config.Cache {
                 uri = this.context.getHost() + r.uri,
                 attribute = this.getAttribute();
 
-            r.variables.njs_http_cache_key_raw = buildCacheKey(uri, attribute);
+            r.variables.ngc_cache_key_raw = buildCacheKey(uri, attribute);
 
-            return r.variables.njs_http_cache_key = buildCacheKey(uri, attribute, true);
+            return r.variables.ngc_cache_key = buildCacheKey(uri, attribute, true);
         } catch (e) {
             if (e instanceof CacheBypassException) {
                 return "";

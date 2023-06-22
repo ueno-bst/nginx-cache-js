@@ -2,18 +2,30 @@ interface NginxVariables {
     /**
      * サーバー設定を収めたJSONファイルパス
      */
-    njs_http_config?: NjsStringLike
+    ngc_config?: NjsStringLike
 
-    njs_http_location?: NjsStringLike
+    ngc_location?: NjsStringLike
 
-    njs_http_debug?: NjsStringLike
-    njs_http_cache_key?: NjsStringLike
-    njs_http_cache_key_raw?: NjsStringLike
-    njs_http_cache_purge_uri?: NjsStringLike
-    njs_http_cache_purge_key?: NjsStringLike
-    njs_http_cache_bypass?: NjsStringLike
-    njs_http_cache_nocache?: NjsStringLike
-    njs_http_cache_expires?: NjsStringLike
-    njs_http_cache_ages?: NjsStringLike
-    njs_http_cache_age?: NjsStringLike
+    ngc_debug?: NjsStringLike
+    ngc_cache_key?: NjsStringLike
+    ngc_cache_key_raw?: NjsStringLike
+    ngc_cache_purge_uri?: NjsStringLike
+    ngc_cache_pure_key_raw?: NjsStringLike
+    ngc_cache_bypass?: NjsStringLike
+    ngc_cache_nocache?: NjsStringLike
+
+    /**
+     * キャッシュの最小保持期間(秒数)
+     */
+    ngc_cache_min_expire?: NjsStringLike
+
+    /**
+     * キャッシュ保持期間のデフォルト値(秒数)
+     */
+    ngc_cache_default_expire?: NjsStringLike
+
+    /**
+     * キャッシュの最長保持期間(秒数)
+     */
+    ngc_cache_max_expire?: NjsStringLike
 }

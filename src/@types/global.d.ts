@@ -1,5 +1,5 @@
 // noinspection ES6ConvertVarToLetConst
 
 export declare global {
-    var http_config: Partial<HTTP.Config.Root> | undefined;
+    var ngc_config: Partial<HTTP.Config.Root> | undefined;
 }
