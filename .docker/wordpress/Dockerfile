@@ -8,9 +8,11 @@ ENV APACHE_RUN_GROUP www-group
 
 # Install standard libraries
 RUN apt-get update \
-    && apt-get install -y zip gzip libzip-dev \
+    && apt-get install -y zip gzip libzip-dev git \
+    && git clone https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
     && pecl install xdebug-3.2.1 zip \
     && docker-php-ext-enable xdebug zip \
+    && docker-php-ext-install redis \
     && apt-get clean
 
 # Install php-composer
