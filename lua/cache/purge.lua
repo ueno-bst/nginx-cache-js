@@ -4,7 +4,6 @@ local redis = require('redis_connect')
 local cjson = require "cjson.safe"
 
 local function response(status, body)
-    local cjson = require "cjson.safe"
     ngx.status = status
     ngx.say(cjson.encode(body))
     ngx.exit(ngx.OK)
