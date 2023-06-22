@@ -1,5 +1,9 @@
 local _M = {}
 
+local host = ngx.var.ngc_redis_host;
+local port = ngx.var.ngc_redis_port;
+local prefix = ngx.var.ngc_redis_prefix;
+
 function _M:get()
     local redis = require('resty.redis')
     local con, err = redis:new()
@@ -20,8 +24,6 @@ function _M:get()
 end
 
 function _M:host()
-    local host = ngx.var.redis_host;
-
     if host then
         return host
     end
@@ -30,13 +32,19 @@ function _M:host()
 end
 
 function _M:port()
-    local port = ngx.var.redis_port;
-
     if port then
         return port
     end
 
     return 6379
+end
+
+function _M:prefix()
+    if prefix then
+        return prefix
+    end
+
+    return "ngc"
 end
 
 return _M

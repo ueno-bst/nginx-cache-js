@@ -1,5 +1,8 @@
 ngx.req.read_body()
 
+local redis = require('redis_connect')
+local cjson = require "cjson.safe"
+
 local function response(status, body)
     local cjson = require "cjson.safe"
     ngx.status = status
@@ -56,7 +59,7 @@ local function sanitizeUrl(v)
         v = v .. "#*"
     end
 
-    return "ngc:" .. v, nil
+    return redis:prefix() .. ":" .. v, nil
 end
 
 local function countTable(t)
@@ -123,7 +126,6 @@ local function sanitizeTable(t)
     return values
 end
 
-local cjson = require "cjson.safe"
 local method = ngx.req.get_method()
 local body = ngx.req.get_body_data()
 
@@ -159,7 +161,7 @@ end
 local origins = sanitizeTable(req)
 
 -- REDIS 接続
-local redis, err = require("redis_connect"):get()
+local con, err = redis:get()
 
 if err then
     response(503, { status = "503 Service Unavailable", message = err })
@@ -187,7 +189,7 @@ for _, o in pairs(origins) do
 
     local _begin = ngx.now()
 
-    local keys = redis:keys(o.key)
+    local keys = con:keys(o.key)
 
     if not keys then
         goto continue;
@@ -208,7 +210,7 @@ for _, o in pairs(origins) do
         end
 
         -- 取得したキー列を Redisから非同期で削除する
-        redis:unlink(unpack(chunks))
+        con:unlink(unpack(chunks))
     end
 
     data[o.src].delay = ngx.now() - _begin

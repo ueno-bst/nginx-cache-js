@@ -4,7 +4,8 @@ local key = assert(ngx.var.redis_key, "no key found")
 --
 -- Redisに接続
 --
-local redis, err = require("redis_connect"):get()
+local redis = require('redis_connect')
+local con, err = redis:get()
 
 if err then
     ngx.log(ngx.ERR, err)
@@ -14,7 +15,7 @@ end
 -- *******************
 -- キャッシュを取得
 -- *******************
-local value = assert(redis:get("ngc:" .. key))
+local value = assert(con:get(redis:prefix() .. ":" .. key))
 
 if type(value) == "string" and string.len(value) > 0 then
     -- キャッシュ取得に成功
