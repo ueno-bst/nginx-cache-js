@@ -127,6 +127,8 @@ local cjson = require "cjson.safe"
 local method = ngx.req.get_method()
 local body = ngx.req.get_body_data()
 
+local begin = ngx.now()
+
 -- リクエストメソッドの確認
 if not (method == "DELETE") then
     response(ngx.HTTP_NOT_ALLOWED, { status = "405 Method Not Allowed" })
@@ -165,9 +167,7 @@ end
 
 local data = {}
 
-local begin = ngx.now()
-
-for i, o in pairs(origins) do
+for _, o in pairs(origins) do
     if o.valid == false then
         data[o.src] = { valid = false, error = o.message }
         goto continue
@@ -193,9 +193,22 @@ for i, o in pairs(origins) do
         goto continue;
     end
 
-    for _, k in pairs(keys) do
-        data[o.src].count = data[o.src].count + 1
-        redis:del(k)
+    local chunks
+
+    -- 取得したキーを 1000件ごとに取得
+    for i = 1, #keys, 1001 do
+        chunks = {}
+
+        -- 1000件のキーをテーブルに収納
+        for j = i, i + 1000 do
+            if type(keys[j]) ~= "nil" then
+                data[o.src].count = data[o.src].count + 1
+                table.insert(chunks, keys[j])
+            end
+        end
+
+        -- 取得したキー列を Redisから非同期で削除する
+        redis:unlink(unpack(chunks))
     end
 
     data[o.src].delay = ngx.now() - _begin
