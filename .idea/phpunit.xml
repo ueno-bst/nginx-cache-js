@@ -4,6 +4,7 @@
     <option name="directories">
       <list>
         <option value="$PROJECT_DIR$/wp-plugins/harpoon-proxy-cache-purge/tests" />
+        <option value="$PROJECT_DIR$/wp-plugins/harpoon-proxy-cache-purge/tests" />
       </list>
     </option>
   </component>

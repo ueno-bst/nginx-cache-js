@@ -1,0 +1,353 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ServerConfig",
+    "type": "object",
+    "description": "サーバー設定",
+    "allOf": [
+        {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "description": "サーバー名識別子",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "サーバー説明文",
+                    "type": "string"
+                },
+                "server": {
+                    "type": "object",
+                    "properties": {
+                        "host": {
+                            "type": "string"
+                        },
+                        "alias": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "host": {
+                    "description": "サーバードメイン名\n最初の値がデフォルトドメインとして使用されます",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "hostname"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                },
+                "protocol": {
+                    "description": "HTTPプロトコルバージョン設定",
+                    "$ref": "#/definitions/ProtocolConfig"
+                },
+                "ssl": {
+                    "description": "SSL設定",
+                    "$ref": "#/definitions/SSLConfig"
+                },
+                "debug": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "location": {
+                    "description": "パス設定リスト",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/LocationConfig"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "name",
+                "host",
+                "location"
+            ]
+        },
+        {
+            "$ref": "#/definitions/DocumentConfig"
+        }
+    ],
+    "definitions": {
+        "LocationConfig": {
+            "description": "パス設定",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "description": "ロケーション識別子",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "ロケーション説明文",
+                    "type": "string"
+                },
+                "uri": {
+                    "title": "URIConfig",
+                    "description": "URIパターンの定義\n指定がない場合、すべてのパターンにマッチします\n\n1文字目で評価式が変化します\n'=:(pattern) 完全一致\n'~:(regex)' 正規表現\n(なし): 前方一致",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true,
+                    "minItems": 1
+                },
+                "cache": {
+                    "$ref": "#/definitions/CacheConfig"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "CacheConfig": {
+            "description": "キャッシュ設定",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enable": {
+                    "description": "キャッシュ機能の有効性",
+                    "type": "boolean",
+                    "default": true
+                },
+                "method": {
+                    "description": "キャッシュ対象とするリクエストメソッド",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "HEAD",
+                            "GET",
+                            "POST",
+                            "PUT",
+                            "PATCH",
+                            "DELETE",
+                            "TRACE",
+                            "LINK",
+                            "UNLINK",
+                            "OPTIONS"
+                        ]
+                    }
+                },
+                "expire": {
+                    "title": "Expire Config",
+                    "description": "有効期限設定",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "default": {
+                            "description": "標準の有効期限",
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 3600
+                        },
+                        "min": {
+                            "description": "最小有効期限",
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "max": {
+                            "description": "最大有効期限",
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    }
+                },
+                "rule": {
+                    "description": "キャッシュルール指定",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "args": {
+                            "$ref": "#/definitions/CacheRuleConfig"
+                        },
+                        "header": {
+                            "$ref": "#/definitions/CacheRuleConfig"
+                        },
+                        "cookie": {
+                            "$ref": "#/definitions/CacheRuleConfig"
+                        }
+                    }
+                }
+            }
+        },
+        "CacheRuleConfig": {
+            "description": "キャッシュルール設定",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "all",
+                        "include",
+                        "exclude"
+                    ],
+                    "default": "none",
+                    "description": "パラメータの扱い型設定\n\n'none': パラメータを一切使用しない\n'all': すべてのパラメータをキャッシュパターンに使用する\n'include': pattern に指定したパラメータをキャッシュパターンに使用\n'exclude': pattern に指定していないパラメータをキャッシュパターンに使用する"
+                },
+                "pattern": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "キャッシュ作成時の振り分けを行うパターン"
+                },
+                "bypass": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "キャッシュ機能を使用しないパラメータパターン ワイルドカードが使用可能です"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "if": {
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "include",
+                            "exclude"
+                        ]
+                    }
+                }
+            },
+            "then": {
+                "required": [
+                    "pattern"
+                ]
+            }
+        },
+        "ProtocolConfig": {
+            "description": "HTTPプロトコルバージョン設定",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "http2": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "http3": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "HSTSConfig": {
+            "title": "HSTS Config",
+            "description": "HTTP Strict Transport Security による、ブラウザによるHTTPS接続を指示する設定",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "max": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "HSTSキャッシュの有効期間。0 の場合はHSTS設定が無効になります"
+                },
+                "include_subdomain": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "HSTS設定をサブドメインにも影響するかの指定"
+                },
+                "preload": {
+                    "type": "boolean",
+                    "description": "HSTS設定を HTTPS Preloadリストに登録するかの指定",
+                    "default": false
+                }
+            }
+        },
+        "SSLConfig": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cert_file": {
+                    "description": "公開鍵へのファイルパス",
+                    "type": "string"
+                },
+                "key_file": {
+                    "description": "秘密鍵へのファイルパス",
+                    "type": "string"
+                },
+                "force_redirect": {
+                    "description": "HTTP > HTTPS へのリダイレクトを強制する",
+                    "type": "boolean",
+                    "default": false
+                },
+                "hsts": {
+                    "description": "HTTP Strict Transport Security 設定",
+                    "$ref": "#/definitions/HSTSConfig"
+                }
+            },
+            "required": [
+                "cert_file",
+                "key_file"
+            ]
+        },
+        "DocumentConfig": {
+            "title": "Document Config",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "root": {
+                    "description": "ドキュメントルートの絶対パス",
+                    "type": "string"
+                },
+                "access_log": {
+                    "description": "アクセスログ設定",
+                    "type": [
+                        "boolean",
+                        "object"
+                    ],
+                    "additionalProperties": false,
+                    "default": true,
+                    "properties": {
+                        "path": {
+                            "description": "ログの出力先",
+                            "type": "string"
+                        },
+                        "format": {
+                            "description": "出力形式名",
+                            "type": "string",
+                            "default": "combine"
+                        }
+                    }
+                },
+                "error_log": {
+                    "description": "エラーログの出力設定",
+                    "type": [
+                        "boolean",
+                        "object"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "path": {
+                            "description": "エラーログの出力先",
+                            "type": "string"
+                        },
+                        "level": {
+                            "description": "エラー出力レベル",
+                            "type": "string",
+                            "enum": [
+                                "debug",
+                                "info",
+                                "notice",
+                                "warn",
+                                "error",
+                                "crit",
+                                "alert",
+                                "emerg"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

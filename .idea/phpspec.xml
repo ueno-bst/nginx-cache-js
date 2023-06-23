@@ -8,6 +8,9 @@
       <PhpSpecSuiteConfiguration>
         <option name="myPath" value="$PROJECT_DIR$/wp-plugins/harpoon-proxy-cache-purge" />
       </PhpSpecSuiteConfiguration>
+      <PhpSpecSuiteConfiguration>
+        <option name="myPath" value="$PROJECT_DIR$/wp-plugins/harpoon-proxy-cache-purge" />
+      </PhpSpecSuiteConfiguration>
     </suites>
   </component>
 </project>

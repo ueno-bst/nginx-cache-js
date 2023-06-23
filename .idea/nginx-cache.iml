@@ -5,6 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/wp-plugins/harpoon-proxy-cache-purge/classes" isTestSource="false" packagePrefix="Harpoon\ProxyCachePurge\" />
       <sourceFolder url="file://$MODULE_DIR$/wp-plugins/harpoon-proxy-cache-purge/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/wp-plugins/harpoon-proxy-cache-purge/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.wp" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/wp-plugins/harpoon-proxy-cache-purge/vendor/composer" />
